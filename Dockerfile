@@ -83,6 +83,19 @@ USER ${COWRIE_USER}
 WORKDIR ${COWRIE_HOME}/cowrie-git
 
 # preserve .dist file when etc/ volume is mounted
+
+RUN sed -i 's/backend = shell/backend = proxy/g' ${COWRIE_HOME}/cowrie-git/etc/cowrie.cfg.dist
+RUN sed -i 's/backend = pool/backend = simple/g' ${COWRIE_HOME}/cowrie-git/etc/cowrie.cfg.dist
+RUN sed -i 's/backend_ssh_host = localhost/backend_ssh_host = 172.17.0.2/g' ${COWRIE_HOME}/cowrie-git/etc/cowrie.cfg.dist
+RUN sed -i 's/backend_ssh_port = 2022/backend_ssh_port = 22/g' ${COWRIE_HOME}/cowrie-git/etc/cowrie.cfg.dist
+RUN sed -i 's/backend_user = root/backend_user = admin/g' ${COWRIE_HOME}/cowrie-git/etc/cowrie.cfg.dist
+RUN sed -i 's/backend_pass = root/backend_pass = password111/g' ${COWRIE_HOME}/cowrie-git/etc/cowrie.cfg.dist
+RUN sed -i 's/listen_endpoints = tcp:2222:interface=0.0.0.0/listen_endpoints = tcp:2222:interface=172.17.0.3/g' ${COWRIE_HOME}/cowrie-git/etc/cowrie.cfg.dist
+
+RUN touch ${COWRIE_HOME}/cowrie-git/etc/userdb.txt
+RUN printf "admin:x:password111\n" > ${COWRIE_HOME}/cowrie-git/etc/userdb.txt
+
+
 RUN cp ${COWRIE_HOME}/cowrie-git/etc/cowrie.cfg.dist ${COWRIE_HOME}/cowrie-git
 VOLUME [ "/cowrie/cowrie-git/var", "/cowrie/cowrie-git/etc" ]
 RUN mv ${COWRIE_HOME}/cowrie-git/cowrie.cfg.dist ${COWRIE_HOME}/cowrie-git/etc
@@ -90,3 +103,4 @@ RUN mv ${COWRIE_HOME}/cowrie-git/cowrie.cfg.dist ${COWRIE_HOME}/cowrie-git/etc
 ENTRYPOINT [ "cowrie" ]
 CMD [ "start", "-n" ]
 EXPOSE 2222 2223
+
