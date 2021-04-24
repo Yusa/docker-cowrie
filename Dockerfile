@@ -42,6 +42,7 @@ RUN export DEBIAN_FRONTEND=noninteractive; \
 USER ${COWRIE_USER}
 
 RUN git clone --separate-git-dir=/tmp/cowrie.git https://github.com/cowrie/cowrie ${COWRIE_HOME}/cowrie-git && \
+    cd ${COWRIE_HOME}/cowrie-git && git reset --hard 8cadcfcc7f1db6f7959b71f7ea2c4c579d95663b && \
     cd ${COWRIE_HOME} && \
       python3 -m venv cowrie-env && \
       . cowrie-env/bin/activate && \
@@ -89,7 +90,7 @@ RUN sed -i 's/backend = pool/backend = simple/g' ${COWRIE_HOME}/cowrie-git/etc/c
 RUN sed -i 's/backend_ssh_host = localhost/backend_ssh_host = 172.17.0.2/g' ${COWRIE_HOME}/cowrie-git/etc/cowrie.cfg.dist
 RUN sed -i 's/backend_ssh_port = 2022/backend_ssh_port = 22/g' ${COWRIE_HOME}/cowrie-git/etc/cowrie.cfg.dist
 RUN sed -i 's/backend_user = root/backend_user = admin/g' ${COWRIE_HOME}/cowrie-git/etc/cowrie.cfg.dist
-RUN sed -i 's/backend_pass = root/backend_pass = password111/g' ${COWRIE_HOME}/cowrie-git/etc/cowrie.cfg.dist
+RUN sed -i 's/backend_pass = root/backend_pass = password/g' ${COWRIE_HOME}/cowrie-git/etc/cowrie.cfg.dist
 RUN sed -i 's/listen_endpoints = tcp:2222:interface=0.0.0.0/listen_endpoints = tcp:2222:interface=172.17.0.3/g' ${COWRIE_HOME}/cowrie-git/etc/cowrie.cfg.dist
 
 RUN touch ${COWRIE_HOME}/cowrie-git/etc/userdb.txt
